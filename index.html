@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>近视成因风险测评 v4 | 亮度视光中心</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 50%, #fefce8 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+    min-height: 100vh;
+  }
+
+  /* ========== 顶部品牌 ========== */
+  .brand {
+    text-align: center;
+    padding: 24px 0 8px;
+  }
+  .brand .logo {
+    width: 72px; height: 72px;
+    background: linear-gradient(145deg, #1e3a5f, #0d2137);
+    border-radius: 12px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; color: #fff;
+    font-weight: 700;
+    letter-spacing: 1px;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+    border: 2px solid #3b82f6;
+    text-shadow: 0 0 8px rgba(59, 130, 246, 0.8);
+  }
+  .brand h1 {
+    font-size: 18px; margin-top: 10px; color: #0f172a;
+  }
+  .brand p {
+    font-size: 13px; color: #64748b; margin-top: 4px;
+  }
+
+  /* ========== 进度条 ========== */
+  .progress-wrap {
+    margin: 16px 0 24px;
+    position: relative;
+  }
+  .progress-bar-bg {
+    height: 8px; border-radius: 4px;
+    background: #e2e8f0;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%; border-radius: 4px;
+    background: linear-gradient(90deg, #0ea5e9, #22c55e);
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-text {
+    font-size: 12px; color: #94a3b8;
+    text-align: right; margin-top: 6px;
+  }
+
+  /* ========== 开始页 ========== */
+  .start-page {
+    text-align: center;
+    padding: 40px 20px;
+    animation: fadeIn 0.5s ease;
+  }
+  .start-page .hero-icon {
+    font-size: 72px;
+    margin-bottom: 20px;
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  .start-page h2 {
+    font-size: 22px; margin-bottom: 12px; color: #0f172a;
+  }
+  .start-page .desc {
+    font-size: 14px; color: #64748b; margin-bottom: 8px; line-height: 1.8;
+  }
+  .start-page .features {
+    display: flex; gap: 12px; justify-content: center;
+    margin: 24px 0 32px; flex-wrap: wrap;
+  }
+  .start-page .feature-tag {
+    background: #f0f9ff; color: #0284c7; font-size: 12px;
+    padding: 6px 14px; border-radius: 20px; border: 1px solid #bae6fd;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    background: linear-gradient(135deg, #1e3a5f, #0d4a7a);
+    color: #fff; border: none; border-radius: 28px;
+    padding: 14px 48px; font-size: 17px; font-weight: 600;
+    cursor: pointer; transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(30,58,95,0.4);
+    text-decoration: none;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(30,58,95,0.5);
+  }
+  .btn-primary:active { transform: translateY(0); }
+
+  /* ========== 测试题页 ========== */
+  .quiz-page { display: none; animation: fadeIn 0.4s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .question-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 28px 22px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
+  }
+  .question-num {
+    font-size: 13px; color: #0ea5e9; font-weight: 600;
+    margin-bottom: 10px; text-transform: uppercase;
+  }
+  .question-text {
+    font-size: 17px; font-weight: 600; color: #0f172a;
+    margin-bottom: 20px; line-height: 1.7;
+  }
+  .question-branch-hint {
+    font-size: 12px; color: #7c3aed; font-weight: 500;
+    margin-bottom: 8px;
+    background: #f5f3ff; padding: 4px 10px; border-radius: 8px;
+    display: inline-block;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+
+  .option-btn {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 14px 18px;
+    font-size: 15px; color: #334155;
+    cursor: pointer; transition: all 0.25s;
+    text-align: left;
+    display: flex; align-items: flex-start; gap: 10px;
+    line-height: 1.5;
+  }
+  .option-btn:hover {
+    border-color: #0ea5e9; background: #f0f9ff;
+  }
+  .option-btn.selected {
+    border-color: #0ea5e9; background: #f0f9ff;
+    color: #0c4a6e; font-weight: 500;
+  }
+  .option-btn.selected .opt-circle {
+    background: #0ea5e9; color: #fff; border-color: #0ea5e9;
+  }
+  .opt-circle {
+    flex-shrink: 0;
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 2px solid #cbd5e1;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600; color: #94a3b8;
+    transition: all 0.25s;
+    margin-top: 1px;
+  }
+
+  .nav-area {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 8px;
+  }
+  .btn-back {
+    background: none; border: none; color: #94a3b8;
+    font-size: 14px; cursor: pointer; padding: 10px 0;
+  }
+  .btn-back:hover { color: #64748b; }
+
+  /* ========== 结果页 ========== */
+  .result-page { display: none; animation: fadeIn 0.5s ease; }
+
+  .result-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 32px 22px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+  }
+  .result-header {
+    text-align: center; margin-bottom: 24px;
+  }
+  .result-header .result-icon { font-size: 56px; margin-bottom: 12px; }
+  .result-header h2 { font-size: 20px; color: #0f172a; margin-bottom: 6px; }
+  .result-header .risk-level {
+    display: inline-block; padding: 4px 16px; border-radius: 20px;
+    font-size: 13px; font-weight: 600;
+  }
+  .risk-low { background: #f0fdf4; color: #16a34a; }
+  .risk-medium { background: #fefce8; color: #ca8a04; }
+  .risk-high { background: #fef2f2; color: #dc2626; }
+
+  .score-detail {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+    margin: 16px 0 24px;
+  }
+  .score-chip {
+    font-size: 11px; padding: 4px 10px; border-radius: 12px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .score-chip .chip-icon { font-size: 14px; }
+
+  .cause-section { margin-bottom: 20px; }
+  .cause-section h3 {
+    font-size: 15px; color: #0f172a; margin-bottom: 12px;
+    padding-left: 12px;
+    border-left: 3px solid #0ea5e9;
+  }
+  .cause-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    margin-bottom: 14px;
+    padding: 12px 14px;
+    background: #f8fafc;
+    border-radius: 12px;
+  }
+  .cause-item .ci-icon {
+    flex-shrink: 0; width: 36px; height: 36px;
+    border-radius: 10px; display: flex;
+    align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .cause-item .ci-icon.c1 { background: #fef3c7; }
+  .cause-item .ci-icon.c2 { background: #dbeafe; }
+  .cause-item .ci-icon.c3 { background: #fce7f3; }
+  .cause-item .ci-icon.c4 { background: #f3e8ff; }
+  .cause-item .ci-icon.c5 { background: #dcfce7; }
+  .cause-item .ci-icon.c6 { background: #ffe4e6; }
+  .cause-item .ci-icon.c7 { background: #e0f2fe; }
+  .cause-item h4 { font-size: 14px; color: #1e293b; margin-bottom: 2px; }
+  .cause-item p { font-size: 12px; color: #64748b; line-height: 1.6; }
+
+  .advice-box {
+    background: linear-gradient(135deg, #f0f9ff, #f0fdf4);
+    border-radius: 14px; padding: 18px;
+    border: 1px solid #bae6fd;
+  }
+  .advice-box h3 { font-size: 15px; color: #0369a1; margin-bottom: 10px; }
+  .advice-box ul {
+    list-style: none; padding: 0;
+  }
+  .advice-box li {
+    font-size: 13px; color: #475569; padding: 5px 0;
+    padding-left: 20px; position: relative;
+    line-height: 1.6;
+  }
+  .advice-box li::before {
+    content: "\2713"; position: absolute; left: 0;
+    color: #22c55e; font-weight: 700;
+  }
+
+  .disclaimer {
+    text-align: center; font-size: 11px; color: #94a3b8;
+    margin-top: 20px; line-height: 1.7; padding: 0 10px;
+  }
+
+  .btn-restart {
+    display: block; width: 100%; margin-top: 20px;
+    background: #f1f5f9; color: #475569;
+    border: none; border-radius: 14px;
+    padding: 14px; font-size: 15px; font-weight: 500;
+    cursor: pointer; transition: all 0.25s;
+  }
+  .btn-restart:hover { background: #e2e8f0; }
+
+  .cta-card {
+    background: linear-gradient(135deg, #1e3a5f, #0d4a7a);
+    border-radius: 20px; padding: 24px 22px;
+    text-align: center; margin-top: 16px; color: #fff;
+    box-shadow: 0 4px 20px rgba(30, 58, 95, 0.4);
+  }
+  .cta-card h3 { font-size: 17px; margin-bottom: 8px; }
+  .cta-card p { font-size: 13px; opacity: 0.9; margin-bottom: 16px; }
+  .btn-cta {
+    display: inline-block;
+    background: #fff; color: #1e3a5f;
+    border: none; border-radius: 28px;
+    padding: 12px 36px; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: all 0.3s;
+    text-decoration: none;
+  }
+  .btn-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+
+  .hidden { display: none !important; }
+
+  /* ========== 跳转动画 ========== */
+  .slide-out-left {
+    animation: slideOutLeft 0.25s ease forwards;
+  }
+  .slide-in-right {
+    animation: slideInRight 0.25s ease forwards;
+  }
+  .slide-out-right {
+    animation: slideOutRight 0.25s ease forwards;
+  }
+  .slide-in-left {
+    animation: slideInLeft 0.25s ease forwards;
+  }
+  @keyframes slideOutLeft {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(-40px); }
+  }
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(40px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideOutRight {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(40px); }
+  }
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-40px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="brand">
+    <div class="logo">VISION</div>
+    <h1>维视眼镜</h1>
+    <p>守护您的清晰视界</p>
+  </div>
+
+  <div id="startPage" class="start-page">
+    <div class="hero-icon">&#x1F52C;</div>
+    <h2>近视成因风险测评</h2>
+    <p class="desc">通过 15 道专业测试题<br>了解您或孩子近视加深的主要原因</p>
+    <div class="features">
+      <span class="feature-tag">&#x1F4CB; 15道专业题目</span>
+      <span class="feature-tag">&#x1F3AF; 成因精准分析</span>
+      <span class="feature-tag">&#x1F4A1; 科学护眼建议</span>
+    </div>
+    <button class="btn-primary" id="btnStart">开始测评 &#x2192;</button>
+  </div>
+
+  <div id="progressWrap" class="progress-wrap hidden">
+    <div class="progress-bar-bg">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+    <div id="progressText" class="progress-text">1 / 15</div>
+  </div>
+
+  <div id="quizPage" class="quiz-page">
+    <div class="question-card" id="questionCard">
+      <div class="question-num" id="questionNum">第 1 题</div>
+      <div id="branchHint"></div>
+      <div class="question-text" id="questionText"></div>
+      <div class="options" id="optionsContainer"></div>
+    </div>
+    <div class="nav-area">
+      <button class="btn-back hidden" id="btnBack">&#x2190; 上一题</button>
+      <div></div>
+    </div>
+  </div>
+
+  <div id="resultPage" class="result-page"></div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // =============================================
+  // 题目数据
+  // =============================================
+
+  var Q1 = {
+    displayNum: '第 1 题', text: '是不是第一次配镜？',
+    options: [
+      { label: '是的，第一次', value: 0, cause: null },
+      { label: '不是，已经配过', value: 0, cause: null }
+    ]
+  };
+
+  var Q2 = {
+    displayNum: '第 2 题', text: '年龄段是？',
+    options: [
+      { label: '学龄前（3~6岁）', value: 0, cause: null },
+      { label: '小学生（6~12岁）', value: 0, cause: null },
+      { label: '中学生（12~18岁）', value: 0, cause: null },
+      { label: '成人（18岁以上）', value: 0, cause: null }
+    ]
+  };
+
+  var Q3_branches = {
+    0: {
+      displayNum: '第 3 题', text: '孩子每天看动画片/玩手机的时间大约是？',
+      hint: '【学龄前版本】',
+      options: [
+        { label: '基本不看', value: 0, cause: 'A' },
+        { label: '每天不到30分钟', value: 1, cause: 'A' },
+        { label: '每天30分钟~1小时', value: 2, cause: 'A' },
+        { label: '每天超过1小时', value: 3, cause: 'A' }
+      ]
+    },
+    1: {
+      displayNum: '第 3 题', text: '孩子每天写作业需要多长时间？',
+      hint: '【小学生版本】',
+      options: [
+        { label: '30分钟以内', value: 0, cause: 'A' },
+        { label: '30分钟~1小时', value: 1, cause: 'A' },
+        { label: '1~2小时', value: 2, cause: 'A' },
+        { label: '超过2小时', value: 3, cause: 'A' }
+      ]
+    },
+    2: {
+      displayNum: '第 3 题', text: '每天用近距离用眼（≤50cm）总时长？',
+      hint: '【中学生版本】',
+      options: [
+        { label: '4小时以内', value: 0, cause: 'A' },
+        { label: '4~6小时', value: 1, cause: 'A' },
+        { label: '6~8小时', value: 2, cause: 'A' },
+        { label: '超过8小时', value: 3, cause: 'A' }
+      ]
+    },
+    3: {
+      displayNum: '第 3 题', text: '您每天对着电脑/手机的时间？',
+      hint: '【成人版本】',
+      options: [
+        { label: '少于4小时', value: 0, cause: 'A' },
+        { label: '4~6小时', value: 1, cause: 'A' },
+        { label: '6~8小时', value: 2, cause: 'A' },
+        { label: '超过8小时', value: 3, cause: 'A' }
+      ]
+    }
+  };
+
+  var Q4 = {
+    displayNum: '第 4 题', text: '看书/看手机时，眼睛距离目标的距离通常是？',
+    options: [
+      { label: '保持一尺以上', value: 0, cause: 'A' },
+      { label: '大约20~30厘米', value: 1, cause: 'A' },
+      { label: '不到20厘米，比较近', value: 2, cause: 'A' },
+      { label: '几乎趴着看/手机贴脸', value: 3, cause: 'A' }
+    ]
+  };
+
+  var Q5_branches = {
+    child: {
+      displayNum: '第 5 题', text: '孩子写作业/看书时的坐姿习惯？',
+      hint: '【儿童版本】',
+      options: [
+        { label: '坐姿端正', value: 0, cause: 'A' },
+        { label: '偶尔趴着/侧着看', value: 1, cause: 'A' },
+        { label: '经常歪着头写作业', value: 2, cause: 'A' },
+        { label: '总躺着看书/趴着写字', value: 3, cause: 'A' }
+      ]
+    },
+    adult: {
+      displayNum: '第 5 题', text: '您/孩子的用眼习惯？',
+      hint: '【青少年/成人版本】',
+      options: [
+        { label: '坐姿端正，定时休息', value: 0, cause: 'A' },
+        { label: '偶尔长时间盯着屏幕', value: 1, cause: 'A' },
+        { label: '经常一坐几小时不动', value: 2, cause: 'A' },
+        { label: '躺着看手机到深夜', value: 3, cause: 'A' }
+      ]
+    }
+  };
+
+  var Q6 = {
+    displayNum: '第 6 题', text: '每天使用手机、平板、电脑等电子屏幕的总时长？（不含必须的学习/工作）',
+    options: [
+      { label: '少于1小时', value: 0, cause: 'A' },
+      { label: '1~2小时', value: 1, cause: 'A' },
+      { label: '2~4小时', value: 2, cause: 'A' },
+      { label: '超过4小时', value: 3, cause: 'A' }
+    ]
+  };
+
+  var Q7 = {
+    displayNum: '第 7 题', text: '每天在户外活动/晒太阳的时间大约是？',
+    options: [
+      { label: '2小时以上', value: 0, cause: 'B' },
+      { label: '1~2小时', value: 1, cause: 'B' },
+      { label: '30分钟~1小时', value: 2, cause: 'B' },
+      { label: '几乎没有', value: 3, cause: 'B' }
+    ]
+  };
+
+  var Q8_branches = {
+    child: {
+      displayNum: '第 8 题', text: '孩子周末和假期更多时间在做？',
+      hint: '【儿童版本】',
+      options: [
+        { label: '户外运动、逛公园', value: 0, cause: 'B' },
+        { label: '一半室内一半户外', value: 1, cause: 'B' },
+        { label: '在家看书/上兴趣班', value: 2, cause: 'B' },
+        { label: '基本在室内玩电子设备', value: 3, cause: 'B' }
+      ]
+    },
+    adult: {
+      displayNum: '第 8 题', text: '周末和假期更多时间在做？',
+      hint: '【青少年/成人版本】',
+      options: [
+        { label: '户外运动、旅游', value: 0, cause: 'B' },
+        { label: '一半室内一半户外', value: 1, cause: 'B' },
+        { label: '在家加班/学习', value: 2, cause: 'B' },
+        { label: '基本在室内看手机/电脑', value: 3, cause: 'B' }
+      ]
+    }
+  };
+
+  var Q9 = {
+    displayNum: '第 9 题', text: '父母双方是否有近视？',
+    options: [
+      { label: '父母都没有', value: 0, cause: 'C' },
+      { label: '一方轻度近视（<300度）', value: 1, cause: 'C' },
+      { label: '一方高度或双方近视', value: 2, cause: 'C' },
+      { label: '双方高度近视（>600度）', value: 3, cause: 'C' }
+    ]
+  };
+
+  var Q10 = {
+    displayNum: '第 10 题', text: '近视大约从几岁开始的？（未近视选A）',
+    options: [
+      { label: '还没有近视', value: 0, cause: 'C' },
+      { label: '12岁以后', value: 1, cause: 'C' },
+      { label: '6~12岁', value: 2, cause: 'C' },
+      { label: '6岁以前/学龄前', value: 3, cause: 'C' }
+    ]
+  };
+
+  var Q11 = {
+    displayNum: '第 11 题', text: '平时的饮食习惯是怎样的？',
+    options: [
+      { label: '均衡，多吃蔬果鱼类', value: 0, cause: 'D' },
+      { label: '一般，偶尔挑食', value: 1, cause: 'D' },
+      { label: '常吃甜食，蔬菜少', value: 2, cause: 'D' },
+      { label: '非常偏食', value: 3, cause: 'D' }
+    ]
+  };
+
+  var Q12 = {
+    displayNum: '第 12 题', text: '每天摄入含钙、维A/D食物（牛奶、鸡蛋、胡萝卜等）情况？',
+    options: [
+      { label: '每天都会吃', value: 0, cause: 'D' },
+      { label: '经常吃，非每天', value: 1, cause: 'D' },
+      { label: '偶尔吃', value: 2, cause: 'D' },
+      { label: '几乎不吃', value: 3, cause: 'D' }
+    ]
+  };
+
+  var Q13 = {
+    displayNum: '第 13 题', text: '晚上学习/看书时的灯光情况如何？',
+    options: [
+      { label: '台灯+大灯，光线充足', value: 0, cause: 'E' },
+      { label: '有台灯，但不太亮', value: 1, cause: 'E' },
+      { label: '只开大灯，没台灯', value: 2, cause: 'E' },
+      { label: '经常昏暗光线下用眼', value: 3, cause: 'E' }
+    ]
+  };
+
+  var Q14 = {
+    displayNum: '第 14 题', text: '看东西时是否会下意识眯眼？',
+    options: [
+      { label: '否', value: 0, cause: 'F' },
+      { label: '是', value: 1, cause: 'F' }
+    ]
+  };
+
+  var Q15 = {
+    displayNum: '第 15 题', text: '平时多久做一次视力检查？',
+    options: [
+      { label: '每半年至少一次', value: 0, cause: 'G' },
+      { label: '每年一次', value: 1, cause: 'G' },
+      { label: '视力不好才去', value: 2, cause: 'G' },
+      { label: '从来没做过检查', value: 3, cause: 'G' }
+    ]
+  };
+
+  // =============================================
+  // 7大维度定义
+  // =============================================
+  var dimDefs = {
+    A: { name: '用眼习惯', icon: '\uD83D\uDCF1', maxScore: 12, colorClass: 'c1',
+      desc: '长时间近距离用眼是近视加深的首要原因。睫状肌持续紧张，导致眼轴拉长。',
+      advice: ['遵循 20-20-20 法则：每用眼20分钟，看20英尺远处20秒', '保持正确读写姿势，一尺一拳一寸', '减少不必要的近距离用眼时间']
+    },
+    B: { name: '户外活动', icon: '\u2600\uFE0F', maxScore: 6, colorClass: 'c2',
+      desc: '户外阳光刺激视网膜释放多巴胺，有效抑制眼轴增长。每天至少2小时户外活动可显著降低近视风险。',
+      advice: ['保证每天至少2小时户外活动时间', '课间10分钟尽量走出教室', '周末多安排户外运动，如篮球、羽毛球等']
+    },
+    C: { name: '遗传因素', icon: '\uD83E\uDDEC', maxScore: 6, colorClass: 'c3',
+      desc: '父母双方近视，孩子近视概率显著升高。高度近视遗传倾向更强，需要更加重视预防。',
+      advice: ['有家族近视史的儿童应从3岁起建立屈光发育档案', '每3~6个月进行一次专业视力检查', '早发现早干预，不要等到度数深了才重视']
+    },
+    D: { name: '饮食营养', icon: '\uD83E\uDD57', maxScore: 6, colorClass: 'c4',
+      desc: '过多糖分会降低体内钙含量，影响眼球壁弹性。缺乏维生素A、D和钙质不利于眼部发育。',
+      advice: ['减少甜食和碳酸饮料的摄入', '多吃深色蔬菜、胡萝卜、蓝莓等护眼食物', '保证每天一杯牛奶，补充钙质']
+    },
+    E: { name: '用眼环境', icon: '\uD83D\uDCA1', maxScore: 3, colorClass: 'c5',
+      desc: '光线过暗或过亮、光线不均匀，都会让眼睛更快疲劳，加速近视发展。',
+      advice: ['学习时同时开启房间大灯和护眼台灯', '台灯应放在写字手对侧，避免手部阴影', '选择色温4000K左右的暖白光护眼灯']
+    },
+    F: { name: '日常习惯', icon: '\uD83D\uDC40', maxScore: 1, colorClass: 'c6',
+      desc: '下意识眯眼看东西说明视力可能在下降，是近视加深的早期信号之一，需要引起重视。',
+      advice: ['如果经常眯眼看东西，建议尽快做视力检查', '眯眼会增加眼部肌肉疲劳，加速近视发展', '已经配镜的要注意度数是否需要更新']
+    },
+    G: { name: '视力管理', icon: '\uD83D\uDC68\u200D\u2695\uFE0F', maxScore: 3, colorClass: 'c7',
+      desc: '不配镜、不常戴眼镜或度数不准，都会让眼睛更疲劳。定期检查是科学防控的基础。',
+      advice: ['发现视力模糊应及时到专业机构检查', '配镜后应坚持佩戴，不要时戴时不戴', '建立屈光发育档案，定期跟踪视力变化']
+    }
+  };
+
+  var MAX_TOTAL = 37;
+  var TOTAL = 15;
+
+  // =============================================
+  // 状态（用数组，index直接对应题号0~14）
+  // =============================================
+  var answers = new Array(TOTAL);
+  var ageIndex = 1;
+  var currentIndex = 0;
+  var switching = false; // 防止快速连点
+
+  // =============================================
+  // 构建当前题目列表
+  // =============================================
+  function buildQuestions() {
+    var isChild = (ageIndex === 0 || ageIndex === 1);
+    return [
+      Q1,
+      Q2,
+      Q3_branches[ageIndex],
+      Q4,
+      isChild ? Q5_branches.child : Q5_branches.adult,
+      Q6,
+      Q7,
+      isChild ? Q8_branches.child : Q8_branches.adult,
+      Q9,
+      Q10,
+      Q11,
+      Q12,
+      Q13,
+      Q14,
+      Q15
+    ];
+  }
+
+  // =============================================
+  // DOM 引用（只获取一次，避免反复查询）
+  // =============================================
+  var dom = {};
+  function cacheDom() {
+    dom.startPage = document.getElementById('startPage');
+    dom.progressWrap = document.getElementById('progressWrap');
+    dom.progressBar = document.getElementById('progressBar');
+    dom.progressText = document.getElementById('progressText');
+    dom.quizPage = document.getElementById('quizPage');
+    dom.questionCard = document.getElementById('questionCard');
+    dom.questionNum = document.getElementById('questionNum');
+    dom.branchHint = document.getElementById('branchHint');
+    dom.questionText = document.getElementById('questionText');
+    dom.optionsContainer = document.getElementById('optionsContainer');
+    dom.btnBack = document.getElementById('btnBack');
+    dom.resultPage = document.getElementById('resultPage');
+  }
+
+  // =============================================
+  // 渲染题目
+  // =============================================
+  function renderQuestion(index, direction) {
+    currentIndex = index;
+    var q = buildQuestions()[index];
+
+    // 进度
+    dom.progressBar.style.width = ((index + 1) / TOTAL * 100) + '%';
+    dom.progressText.textContent = (index + 1) + ' / ' + TOTAL;
+
+    // 题目内容
+    dom.questionNum.textContent = q.displayNum || ('\u7B2C ' + (index + 1) + ' \u9898');
+    dom.questionText.textContent = q.text;
+
+    // 分支提示
+    if (q.hint) {
+      dom.branchHint.innerHTML = '<span class="question-branch-hint">' + q.hint + '</span>';
+    } else {
+      dom.branchHint.innerHTML = '';
+    }
+
+    // 选项
+    var labels = ['A', 'B', 'C', 'D'];
+    var saved = answers[index];
+    dom.optionsContainer.innerHTML = '';
+
+    for (var i = 0; i < q.options.length; i++) {
+      (function(idx) {
+        var opt = q.options[idx];
+        var btn = document.createElement('button');
+        btn.className = 'option-btn' + (saved === idx ? ' selected' : '');
+        btn.innerHTML = '<span class="opt-circle">' + labels[idx] + '</span><span>' + opt.label + '</span>';
+        btn.addEventListener('click', function() { onSelect(idx); });
+        dom.optionsContainer.appendChild(btn);
+      })(i);
+    }
+
+    // 上一题按钮
+    if (index === 0) {
+      dom.btnBack.classList.add('hidden');
+    } else {
+      dom.btnBack.classList.remove('hidden');
+    }
+
+    // 确保答题页可见
+    dom.quizPage.style.display = 'block';
+    window.scrollTo(0, 0);
+
+    // 跳转动画
+    if (direction) {
+      var card = dom.questionCard;
+      card.classList.remove('slide-in-right', 'slide-in-left');
+      card.classList.add(direction === 'next' ? 'slide-in-right' : 'slide-in-left');
+      setTimeout(function() { card.classList.remove('slide-in-right', 'slide-in-left'); }, 260);
+    }
+  }
+
+  // =============================================
+  // 选择选项 → 自动跳转
+  // =============================================
+  function onSelect(optIdx) {
+    if (switching) return; // 防连点
+    switching = true;
+
+    var index = currentIndex;
+    answers[index] = optIdx;
+
+    // 如果是第2题（index=1），更新年龄段并清除后续答案
+    if (index === 1) {
+      ageIndex = optIdx;
+      for (var k = 2; k < TOTAL; k++) {
+        answers[k] = undefined;
+      }
+    }
+
+    // 高亮选中项
+    var btns = dom.optionsContainer.querySelectorAll('.option-btn');
+    for (var b = 0; b < btns.length; b++) {
+      if (b === optIdx) {
+        btns[b].classList.add('selected');
+      } else {
+        btns[b].classList.remove('selected');
+      }
+      btns[b].style.pointerEvents = 'none'; // 禁止重复点击
+    }
+
+    // 滑出动画
+    var card = dom.questionCard;
+    if (index < TOTAL - 1) {
+      card.classList.add('slide-out-left');
+      setTimeout(function() {
+        card.classList.remove('slide-out-left');
+        renderQuestion(index + 1, 'next');
+        switching = false;
+      }, 280);
+    } else {
+      // 最后一题，显示结果
+      setTimeout(function() {
+        showResult();
+        switching = false;
+      }, 500);
+    }
+  }
+
+  // =============================================
+  // 上一题
+  // =============================================
+  function onBack() {
+    if (switching || currentIndex <= 0) return;
+    switching = true;
+
+    var card = dom.questionCard;
+    card.classList.add('slide-out-right');
+    setTimeout(function() {
+      card.classList.remove('slide-out-right');
+      renderQuestion(currentIndex - 1, 'prev');
+      switching = false;
+    }, 280);
+  }
+
+  // =============================================
+  // 开始测评
+  // =============================================
+  function startQuiz() {
+    answers = new Array(TOTAL);
+    ageIndex = 1;
+    currentIndex = 0;
+    switching = false;
+
+    dom.startPage.classList.add('hidden');
+    dom.progressWrap.classList.remove('hidden');
+    dom.resultPage.style.display = 'none';
+    dom.resultPage.innerHTML = '';
+
+    renderQuestion(0);
+  }
+
+  // =============================================
+  // 计算结果
+  // =============================================
+  function calculateScores() {
+    var scores = { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, G: 0 };
+    var questions = buildQuestions();
+    for (var i = 0; i < TOTAL; i++) {
+      if (answers[i] === undefined || answers[i] === null) continue;
+      var opt = questions[i].options[answers[i]];
+      if (opt.cause && dimDefs[opt.cause]) {
+        scores[opt.cause] += opt.value;
+      }
+    }
+    return scores;
+  }
+
+  function showResult() {
+    dom.quizPage.style.display = 'none';
+    dom.progressWrap.classList.add('hidden');
+    dom.resultPage.style.display = 'block';
+
+    var scores = calculateScores();
+    var sorted = Object.keys(scores).map(function(k) { return [k, scores[k]]; });
+    sorted.sort(function(a, b) { return b[1] - a[1]; });
+
+    var totalScore = 0;
+    for (var s = 0; s < sorted.length; s++) totalScore += sorted[s][1];
+
+    var riskLevel, riskClass, riskEmoji;
+    var lowThresh = Math.round(MAX_TOTAL * 0.35);
+    var highThresh = Math.round(MAX_TOTAL * 0.7);
+    if (totalScore <= lowThresh) {
+      riskLevel = '低风险'; riskClass = 'risk-low'; riskEmoji = '\uD83D\uDFE2';
+    } else if (totalScore <= highThresh) {
+      riskLevel = '中等风险'; riskClass = 'risk-medium'; riskEmoji = '\uD83D\uDFE1';
+    } else {
+      riskLevel = '高风险'; riskClass = 'risk-high'; riskEmoji = '\uD83D\uDD34';
+    }
+
+    var dimChips = [];
+    for (var d = 0; d < sorted.length; d++) {
+      var key = sorted[d][0], score = sorted[d][1], max = dimDefs[key].maxScore;
+      var pct = max > 0 ? Math.round(score / max * 100) : 0;
+      dimChips.push({ key: key, score: score, max: max, pct: pct });
+    }
+
+    var topCauses = dimChips.filter(function(dc) { return dc.score > 0; }).slice(0, 3);
+    if (topCauses.length === 0) topCauses = dimChips.slice(0, 3);
+
+    var chipsHtml = '';
+    for (var c = 0; c < dimChips.length; c++) {
+      var dc = dimChips[c];
+      var bg = dc.pct <= 30 ? '#f0fdf4' : dc.pct <= 60 ? '#fefce8' : '#fef2f2';
+      var fg = dc.pct <= 30 ? '#16a34a' : dc.pct <= 60 ? '#ca8a04' : '#dc2626';
+      chipsHtml += '<span class="score-chip" style="background:' + bg + ';color:' + fg + '">' +
+        '<span class="chip-icon">' + dimDefs[dc.key].icon + '</span>' +
+        dimDefs[dc.key].name + ' ' + dc.score + '/' + dc.max + '</span>';
+    }
+
+    var causesHtml = '';
+    for (var t = 0; t < topCauses.length; t++) {
+      var tc = topCauses[t];
+      var def = dimDefs[tc.key];
+      causesHtml += '<div class="cause-item"><div class="ci-icon ' + def.colorClass + '">' + def.icon + '</div>' +
+        '<div><h4>' + def.name + '（风险 ' + Math.min(tc.pct, 100) + '%）</h4><p>' + def.desc + '</p></div></div>';
+    }
+
+    var adviceList = [];
+    for (var a = 0; a < topCauses.length; a++) {
+      var advs = dimDefs[topCauses[a].key].advice;
+      for (var ai = 0; ai < advs.length; ai++) adviceList.push(advs[ai]);
+    }
+    var adviceHtml = '';
+    for (var al = 0; al < Math.min(adviceList.length, 8); al++) {
+      adviceHtml += '<li>' + adviceList[al] + '</li>';
+    }
+
+    var q1Answer = answers[0];
+    var firstTimeMsg = '';
+    if (q1Answer === 0) {
+      firstTimeMsg = '<div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px;color:#0369a1;">' +
+        '\uD83D\uDCCC <b>第一次配镜提示：</b>建议到专业视光中心做全面验光检查，包括散瞳验光，确保度数准确。不建议直接在普通眼镜店快速配镜。</div>';
+    }
+
+    var html =
+      '<div class="result-card">' +
+        '<div class="result-header">' +
+          '<div class="result-icon">' + riskEmoji + '</div>' +
+          '<h2>测评结果</h2>' +
+          '<span class="risk-level ' + riskClass + '">' + riskLevel + ' \xB7 \u603B\u5206 ' + totalScore + '/' + MAX_TOTAL + '</span>' +
+        '</div>' +
+        '<div class="score-detail">' + chipsHtml + '</div>' +
+        firstTimeMsg +
+        '<div class="cause-section"><h3>\uD83D\uDCC8 \u4E3B\u8981\u8FD1\u89C6\u6210\u56E0\uFF08\u6309\u98CE\u9669\u6392\u5E8F\uFF09</h3>' + causesHtml + '</div>' +
+        '<div class="cause-section"><h3>\uD83D\uDCA1 \u9488\u5BF9\u6027\u62A4\u773C\u5EFA\u8BAE</h3>' +
+          '<div class="advice-box"><h3>\u79D1\u5B66\u7684\u62A4\u773C\u65B9\u6CD5</h3><ul>' + adviceHtml + '</ul></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="cta-card">' +
+        '<h3>\u5EFA\u8BAE\u5230\u4E13\u4E1A\u89C6\u5149\u4E2D\u5FC3\u505A\u5168\u9762\u68C0\u67E5</h3>' +
+        '<p>\u5728\u7EBF\u6D4B\u8BC4\u4EC5\u4F9B\u53C2\u8003\uFF0C\u79D1\u5B66\u9632\u63A7\u9700\u8981\u4E13\u4E1A\u68C0\u6D4B</p>' +
+        '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">' +
+          '<a class="btn-cta" href="tel:19975821356">\uD83D\uDCDE 19975821356</a>' +
+          '<a class="btn-cta" href="weixin://">\uD83D\uDCAC \u52A0\u5FAE\u4FE1</a>' +
+        '</div>' +
+      '</div>' +
+      '<button class="btn-restart" id="btnRestart">\u91CD\u65B0\u6D4B\u8BC4</button>' +
+      '<div class="disclaimer">' +
+        '\u26A0\uFE0F \u672C\u6D4B\u8BC4\u4EC5\u4F9B\u53C2\u8003\uFF0C\u4E0D\u6784\u6210\u533B\u7597\u8BCA\u65AD\u5EFA\u8BAE\u3002<br>' +
+        '\u5982\u6709\u89C6\u529B\u95EE\u9898\uFF0C\u8BF7\u53CA\u65F6\u524D\u5F80\u4E13\u4E1A\u773C\u79D1/\u89C6\u5149\u673A\u6784\u68C0\u67E5\u3002<br>' +
+        '\u00A9 \u7EF4\u89C6\u773C\u955C' +
+      '</div>';
+
+    dom.resultPage.innerHTML = html;
+
+    // 绑定重新测评按钮
+    document.getElementById('btnRestart').addEventListener('click', restartQuiz);
+
+    window.scrollTo(0, 0);
+  }
+
+  function restartQuiz() {
+    dom.resultPage.style.display = 'none';
+    dom.resultPage.innerHTML = '';
+    dom.startPage.classList.remove('hidden');
+    window.scrollTo(0, 0);
+  }
+
+  // =============================================
+  // 初始化
+  // =============================================
+  document.addEventListener('DOMContentLoaded', function() {
+    cacheDom();
+    document.getElementById('btnStart').addEventListener('click', startQuiz);
+    dom.btnBack.addEventListener('click', onBack);
+  });
+
+})();
+</script>
+</body>
+</html>
